@@ -4,6 +4,7 @@ from routes import auth_route,index_route
 
 app = Flask(__name__)
 
+port=config('PORT')
 class Config():
     SECRET_KEY = config('SECRET_KEY')
 
@@ -23,4 +24,4 @@ app.register_blueprint(auth_route.main, url_prefix='/auth')
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host='0.0.0.0', port=port)
