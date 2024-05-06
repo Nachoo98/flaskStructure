@@ -4,27 +4,29 @@ import traceback
 
 from utils.logger import Logger
 
-from models.user_model import User
+from models.user_model import UserModel as User
 from utils.security import Security
 from services.auth_service import AuthService
 
 main = Blueprint('auth_blueprint', __name__)
 
-@main.route('/', methods=['POST'])
-def login():
+@main.route('/login', methods=['POST'])
+async def login():
     try:
-        username = request.json['username']
-        password = request.json['password']
+        await AuthService.login_user(request.form['username'], request.form['password'])
+        return "Ok"
+    except Exception as ex:
+        Logger.add_to_log("error", str(ex))
+        Logger.add_to_log("error", traceback.format_exc())
 
-        _user = User(0, username, password, None)
-        authenticated_user = AuthService.login_user(_user)
+        return jsonify({'message': "ERROR", 'success': False})
+    
 
-        if (authenticated_user != None):
-            encoded_token = Security.generate_token(authenticated_user)
-            return jsonify({'success': True, 'token': encoded_token})
-        else:
-            response = jsonify({'message': 'Unauthorized'})
-            return response, 401
+@main.route('/register', methods=['POST'])
+async def register():
+    try:
+        user = await AuthService.register_user(request.json)
+        return jsonify(user)
     except Exception as ex:
         Logger.add_to_log("error", str(ex))
         Logger.add_to_log("error", traceback.format_exc())

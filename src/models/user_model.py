@@ -1,7 +1,11 @@
-class User():
+from sqlalchemy import  Column, String,DateTime
+from models.base import BaseModel
 
-    def __init__(self, id, username, password, fullname) -> None:
-        self.id = id
-        self.username = username
-        self.password = password
-        self.fullname = fullname
+class UserModel(BaseModel):
+    __tablename__ = "user"
+    username = Column(String(100))
+    fullname = Column(String(100))
+    password = Column(String(100))
+    last_login = Column(DateTime, default=None)
+
+

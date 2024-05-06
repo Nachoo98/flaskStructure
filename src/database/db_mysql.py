@@ -1,18 +1,22 @@
 from decouple import config
-import pymysql
-import traceback
+from typing import Generator
 
-from utils.logger import Logger
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
 
-def get_connection():
+SQLALCHEMY_DATABASE_URL = f'mysql+pymysql://{config("MYSQL_USER")}:{config("MYSQL_PASSWORD")}@{config("MYSQL_HOST")}/{config("MYSQL_DATABASE")}?charset=utf8mb4'
+
+engine = create_engine(SQLALCHEMY_DATABASE_URL, pool_pre_ping=True)
+
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+Base = declarative_base()
+
+
+def get_db() -> Generator:
     try:
-        return pymysql.connect(
-            host=config('MYSQL_HOST'),
-            user=config('MYSQL_USER'),
-            password=config('MYSQL_PASSWORD'),
-            db=config('MYSQL_DATABASE'),
-        )
-
-    except Exception as ex:
-        Logger.add_to_log("error", str(ex))
-        Logger.add_to_log("error", traceback.format_exc())
+        db = SessionLocal()
+        yield db
+    finally:
+        db.close()

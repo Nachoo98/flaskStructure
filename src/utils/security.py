@@ -19,8 +19,7 @@ class Security():
                 'iat': datetime.datetime.now(tz=cls.tz),
                 'exp': datetime.datetime.now(tz=cls.tz) + datetime.timedelta(minutes=10),
                 'username': authenticated_user.username,
-                'fullname': authenticated_user.fullname,
-                'roles': ['Administrator', 'Editor']
+                'fullname': authenticated_user.fullname
             }
             return jwt.encode(payload, cls.secret, algorithm="HS256")
         except Exception as ex:

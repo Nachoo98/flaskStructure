@@ -42,5 +42,4 @@ class Logger():
             elif (level == "warn"):
                 logger.warn(message)
         except Exception as ex:
-            print(traceback.format_exc())
             print(ex)
